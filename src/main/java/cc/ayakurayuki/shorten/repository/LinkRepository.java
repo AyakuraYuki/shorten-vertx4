@@ -4,6 +4,7 @@ package cc.ayakurayuki.shorten.repository;
 import cc.ayakurayuki.shorten.core.Application;
 import cc.ayakurayuki.shorten.model.Link;
 import cc.ayakurayuki.shorten.model.SaveURLRsp;
+import cc.ayakurayuki.shorten.util.RandomUtils;
 import io.vertx.core.Future;
 import io.vertx.core.json.Json;
 import io.vertx.redis.client.RedisAPI;
@@ -39,7 +40,9 @@ public class LinkRepository {
     return load(key)
       .compose(existLink -> {
         if (existLink != null) {
-          return save(key, link, ttl, fromAdmin, isWhite);
+          int keyLength = key.length();
+          String newKey = RandomUtils.generateKey(keyLength);
+          return save(newKey, link, ttl, fromAdmin, isWhite);
         }
 
         long nowSeconds = System.currentTimeMillis() / 1000;
